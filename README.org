@@ -1,0 +1,22 @@
+#+TITLE: nnir-mu
+
+An mu search backend for Gnus' nnir.
+
+Of course mu is required and must be set up properly for the groups
+you want to search. This works almost identically to the current
+notmuch engine.
+
+* Enable
+To start using it can be as simple as;
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "/path/to/nnir-mu")
+  (require 'nnir-mu)
+
+  ;; Then, like any other nnir backend
+  (custom-set-variables
+   '(nnir-method-default-engines '((nnmaildir . mu))))
+  ;; or
+  (setq nnir-method-default-engines '((nnmaildir . mu)))
+#+end_src
+
+For configuration options see the header of [[./nnir-mu.el]]
