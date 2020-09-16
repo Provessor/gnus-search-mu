@@ -29,6 +29,8 @@
 ;; backends. It relies on the `mu' executable and thus can only search local mail and requires `mu'
 ;; to be configured for your mail setup. Tested with an nnmaildir backend synced with mbsync.
 
+;; TODO: configuration
+
 ;;; Code:
 
 (require 'nnir)
@@ -44,22 +46,72 @@
   :type '(repeat (string))
   :group 'nnir)
 
-(defcustom nnir-mu-remove-prefix
-  (regexp-quote (or (getenv "MAILDIR") (expand-file-name "~/Mail")))
+(defcustom nnir-mu-remove-prefix nil
   "The prefix to remove from each file name returned by notmuch
 in order to get a group name. Generally this should be set to
 your path to your mail directory. This is a regular expression.
+
+If it is `nil' then the maildir returned from mu will be used instead.
 
 This is very similar to `nnir-notmuch-remove-prefix' and
 `nnir-namazu-remove-prefix'."
   :type '(regexp)
   :group 'nnir)
 
-(defcustom nnir-mu-filter-group-names-function nil)
+;; TODO: part of notmuch engine
+;; (defcustom nnir-mu-filter-group-names-function nil)
 
 
 (defun nnir-run-mu (query server &optional groups)
-  "Run QUERY against mu.")
+  "Run QUERY against mu."
+  (message "nnir-run-mu: ")
+  (save-excursion
+    (let* (artlist
+	   (qstring (cdr (assq 'query query)))
+	   (prefix (nnir-read-server-parm 'nnir-mu-remove-prefix server))
+	   (article-pattern (if (string-prefix-p "nnmaildir:"
+						 (gnus-group-server server))
+				":[0-9]+"
+			      "^[0-9]+$")))
+      (when (string-equal "" qstring)
+	(error "mu: You need a search term"))
+
+      (set-buffer (gnus-get-buffer-create nnir-tmp-buffer))
+      (erase-buffer)
+
+      (let ((cp-list `(,nnir-mu-program
+		       nil
+		       t
+		       nil
+		       "find"
+		       "--format=sexp"
+		       ,@(nnir-read-server-parm 'nnir-mu-additional-switches
+						server)
+		       ,qstring)))
+	(apply #'call-process cp-list))
+
+      (goto-char (point-min))
+      (let (point-start objcons filenam artno dirnam)
+	(while (not (looking-at "\n$"))
+	  (setq objcons (car
+			 (read-from-string
+			  (decode-coding-string
+			   (buffer-substring-no-properties
+			    (1- (search-forward-regexp "^(" nil t))
+			    (search-forward-regexp "^)" nil t))
+			   'utf-8 t))))
+	  (setq filenam (plist-get objcons :path)
+		artno (file-name-nondirectory filenam)
+		dirnam (file-name-directory filenam))
+
+	  (when (and (string-match article-pattern artno)
+		     (not (null dirnam)))
+	    (print (list dirnam artno "" prefix server artlist))
+	    (nnir-add-result dirnam artno "" prefix server artlist))))
+
+      (message "Getting massaged by mu...done")
+
+      artlist)))
 
 
 (add-to-list 'nnir-engines '(mu nnir-run-mu
