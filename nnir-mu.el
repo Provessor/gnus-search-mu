@@ -25,11 +25,20 @@
 
 ;;; Commentary
 
-;; This package provides an `mu' backend for Gnus' nnir as an alternative to notmuch or any other
-;; backends. It relies on the `mu' executable and thus can only search local mail and requires `mu'
-;; to be configured for your mail setup. Tested with an nnmaildir backend synced with mbsync.
+;; This package provides an `mu' backend for Gnus' nnir as an
+;; alternative to notmuch or any other backends. It relies on the `mu'
+;; executable and thus can only search local mail and requires `mu' to
+;; be configured for your mail setup. Tested with an nnmaildir backend
+;; synced with mbsync.
 
-;; TODO: configuration
+;;; Configuration:
+
+;; Generally the defaults will work find but first mu must be
+;; installed and configured, see mu(1) and mu-init(1).
+
+;; Available options:
+;;  - `nnir-mu-program'
+;;  - `nnir-mu-remove-prefix'
 
 ;;; Code:
 
