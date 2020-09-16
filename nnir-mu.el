@@ -51,7 +51,9 @@
 in order to get a group name. Generally this should be set to
 your path to your mail directory. This is a regular expression.
 
-If it is `nil' then the maildir returned from mu will be used instead.
+If it is `nil' then the maildir returned from mu will be used
+instead. This can be an expensive process but works without any
+configuration.
 
 This is very similar to `nnir-notmuch-remove-prefix' and
 `nnir-namazu-remove-prefix'."
@@ -106,6 +108,12 @@ This is very similar to `nnir-notmuch-remove-prefix' and
 
 	  (when (and (string-match article-pattern artno)
 		     (not (null dirnam)))
+	    (unless prefix
+		(setq prefix (string-trim-right filenam
+						(concat (regexp-quote
+							 (plist-get objcons
+								    :maildir))
+							".*"))))
 	    (print (list dirnam artno "" prefix server artlist))
 	    (nnir-add-result dirnam artno "" prefix server artlist))))
 
