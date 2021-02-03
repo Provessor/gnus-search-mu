@@ -1,22 +1,23 @@
-#+TITLE: nnir-mu
+#+TITLE: gnus-search-mu
 
-An mu search backend for Gnus' nnir.
+An mu search engine for Gnus' search facility.
 
-Of course mu is required and must be set up properly for the groups
-you want to search. This works almost identically to the current
-notmuch engine.
+Of course mu is required and must be set up properly for the groups you want to search. This works
+almost identically to the current notmuch engine.
 
 * Enable
 To start using it can be as simple as;
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "/path/to/nnir-mu")
-  (require 'nnir-mu)
+  (add-to-list 'load-path "/path/to/gnus-search-mu")
+  (require 'gnus-search-mu)
 
   ;; Then, like any other nnir backend
   (custom-set-variables
-   '(nnir-method-default-engines '((nnmaildir . mu))))
+   '(gnus-search-default-engines '((nnmaildir . gnus-search-mu))))
   ;; or
-  (setq nnir-method-default-engines '((nnmaildir . mu)))
+  (setq gnus-search-default-engines '((nnmaildir . gnus-search-mu)))
 #+end_src
 
-For configuration options see the header of [[./nnir-mu.el]]
+For configuration options see the header of [[./gnus-search-mu.el]]. It is designed to fit in with the
+generic gnus-search design where possible, unlike the gnus-search-notmuch engine (which even prefers
+to handle some filtering in elisp instead of the query).
