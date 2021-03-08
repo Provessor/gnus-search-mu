@@ -43,7 +43,6 @@
 ;;  - `gnus-search-mu-switches'
 ;;  - `gnus-search-mu-remove-prefix'
 ;;  - `gnus-search-mu-config-directory'
-;;  - `gnus-search-mu-config-directory'
 ;;  - `gnus-search-mu-raw-queries-p'
 
 
@@ -125,9 +124,15 @@ This can also be set per-server."
 (cl-defmethod gnus-search-transform-expression ((engine gnus-search-mu)
 						(expr list))
   (cl-case (car expr)
-    (sender (setf (car expr) 'from))
-    (recipient (setf (car expr) 'to))
-    (mark (setf (car expr) 'tag)))
+    (recipient (setf (car expr) 'recip))
+    (address (setf (car expr) 'contact))
+    (id (setf (car expr) 'msgid))   	; message-id is translated
+    ;; mark
+    (attachment (setf (car expr) 'file))
+    ;; TODO: implement or remove these
+    (thread (error "thread: not supported by mu"))
+    (limit (error "limit: not yet implemented"))
+    (grep (error "grep: not yet implemented")))
   (cl-flet ((mu-date (date)
 		     (if (stringp date)
 			 date
@@ -145,22 +150,19 @@ This can also be set per-server."
     (cond
      ((consp (car expr))
       (format "(%s)" (gnus-search-transform engine expr)))
-  ;;    ((eql (car expr) 'address)
-  ;;     (gnus-search-transform engine `((or (from . ,(cdr expr))
-  ;; 					  (to . ,(cdr expr))))))
-  ;;    ((eql (car expr 'body))
-  ;;     (cdr expr))
-  ;;    ((memq (car expr) '(from to subject attachment mimetype tag
-  ;; 			      id thread folder path lastmod query
-  ;; 			      property))
-  ;;     (when (eql (car expr) 'id)
-  ;; 	(setf (cdr expr) (replace-regexp-in-string "\\`<\\|>\\'"
-  ;; 						   ""
-  ;; 						   (cdr expr))))
-  ;;     (format "%s:%s" (car expr)
-  ;; 	      (if (string-match "\\`\\*" (cdr expr))
-  ;; 		  (replace-match "" nil nil (cdr expr))
-  ;; 		(cdr expr))))
+     ((memq (car expr) '(cc c bcc h from f to t subject s body b
+			    maildir m msgid i prio p flag g date d
+			    size z embed e file j mime y tag x
+			    list v))
+      ;; TODO: check if msgid needs translation
+      ;; (when (eql (car expr) 'id)
+      ;; 	(setf (cdr expr) (replace-regexp-in-string "\\`<\\|>\\'"
+      ;; 						   ""
+      ;; 						   (cdr expr))))
+      (format "%s:%s" (car expr)
+	      (if (string-match "\\`\\*" (cdr expr))
+		  (replace-match "" nil nil (cdr expr))
+		(cdr expr))))
      ((eq (car expr) 'date)
       (format "date:%s" (mu-date (cdr expr))))
      ((eq (car expr) 'before)
