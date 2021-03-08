@@ -130,9 +130,7 @@ This can also be set per-server."
     ;; mark
     (attachment (setf (car expr) 'file))
     ;; TODO: implement or remove these
-    (thread (error "thread: not supported by mu"))
-    (limit (error "limit: not yet implemented"))
-    (grep (error "grep: not yet implemented")))
+    (thread (error "thread: not yet implemented")))
   (cl-flet ((mu-date (date)
 		     (if (stringp date)
 			 date
@@ -186,7 +184,7 @@ This can also be set per-server."
 						  (qstring string)
 						  query &optional groups)
   (let ((limit (alist-get 'limit query))
-	;;(thread (alist-get 'thread query))
+	;; (thread (alist-get 'thread query))
 	)
     (with-slots (switches config-directory) engine
       `("find" 			; command must come first
@@ -196,9 +194,9 @@ This can also be set per-server."
 	,qstring
 	,@(if groups
 	      `("and" "("
-		,@(mapcar (lambda (x)
-			    (concat "maildir:/" x))
-			  groups)
+		,@(nbutlast (mapcan (lambda (x)
+				      (list (concat "maildir:/" x) "or"))
+				    groups))
 		")")
 	    "")
 	"--format=sexp"))))
