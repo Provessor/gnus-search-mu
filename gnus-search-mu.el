@@ -62,8 +62,8 @@ This can also be set per-server."
 (defcustom gnus-search-mu-switches '()
   "A list of strings, to be given as additional arguments to mu.
 
-Changing the format will have no effect because it is forced to
-\"--format=sexp\".
+Changing the format or fields will have no effect because it is
+forced to \"--format=plain\" and \"--fields=l\" respectively.
 
 This can also be set per-server."
   :type '(repeat (string))
@@ -170,15 +170,13 @@ This can also be set per-server."
      (t (ignore-errors (cl-call-next-method))))))
 
 (cl-defmethod gnus-search-indexed-extract ((_engine gnus-search-mu))
-  (let ((objcons (car (read-from-string
-		       (decode-coding-string
-			(buffer-substring-no-properties
-			 (1- (search-forward-regexp "^("))
-			 (search-forward-regexp "^)"))
-			'utf-8 t)))))
-    (when (looking-at "\n$")
-      (goto-char (point-max)))
-    (list (plist-get objcons :path) 100)))
+  (prog1
+      (list (ansi-color-filter-apply
+	     (buffer-substring-no-properties (point)
+					     (progn (end-of-line)
+						    (point))))
+	    100)
+    (forward-char)))
 
 (cl-defmethod gnus-search-indexed-search-command ((engine gnus-search-mu)
 						  (qstring string)
@@ -199,6 +197,7 @@ This can also be set per-server."
 				    groups))
 		")")
 	    "")
-	"--format=sexp"))))
+	"--format=plain"
+	"--fields=l"))))
 
 (provide 'gnus-search-mu)
