@@ -23,7 +23,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary
+;;; Commentary:
 
 ;; This package provides an `mu' engine for Gnus' search facility as an
 ;; alternative to notmuch or any other backends. It relies on the `mu'
@@ -175,15 +175,14 @@ This can also be set per-server."
 	     (buffer-substring-no-properties (point)
 					     (progn (end-of-line)
 						    (point))))
+	    ;; TODO: parse mu priority levels
 	    100)
     (forward-char)))
 
 (cl-defmethod gnus-search-indexed-search-command ((engine gnus-search-mu)
 						  (qstring string)
 						  query &optional groups)
-  (let ((limit (alist-get 'limit query))
-	;; (thread (alist-get 'thread query))
-	)
+  (let ((limit (alist-get 'limit query)))
     (with-slots (switches config-directory) engine
       `("find" 			; command must come first
 	,(format "--muhome=%s" config-directory)
