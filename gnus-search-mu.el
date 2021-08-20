@@ -80,7 +80,7 @@ This is very similar to `gnus-search-notmuch-remove-prefix' and
   :group 'gnus-search)
 
 (defcustom gnus-search-mu-config-directory
-  (expand-file-name "~/.mu")
+  (expand-file-name "~/.cache/mu")
   "Configuration directory for mu.
 
 This can also be set per-server."
