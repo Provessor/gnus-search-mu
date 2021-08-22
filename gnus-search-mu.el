@@ -50,6 +50,7 @@
 
 (require 'gnus-search)
 (require 'gnus-art)
+(require 'ansi-color)
 
 
 (defcustom gnus-search-mu-program "mu"
