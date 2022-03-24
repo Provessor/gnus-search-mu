@@ -156,8 +156,10 @@ This can also be set per-server."
     (cond
      ((consp (car expr))
       (format "(%s)" (gnus-search-transform engine expr)))
+     ;; Explicitly leave out 'date as gnus-search will encode it
+     ;; first; it is handled later
      ((memq (car expr) '(cc c bcc h from f to t subject s body b
-			    maildir m msgid i prio p flag g date d
+			    maildir m msgid i prio p flag g d
 			    size z embed e file j mime y tag x
 			    list v))
       (format "%s:%s" (car expr)
