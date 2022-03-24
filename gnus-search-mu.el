@@ -129,9 +129,7 @@ This can also be set per-server."
     (id (setf (car expr) 'msgid))
     ;; TODO: implement this
     (mark (error "mark: not yet implemented"))
-    (attachment (setf (car expr) 'file))
-    ;; TODO: implement this
-    (thread (error "thread: not yet implemented")))
+    (attachment (setf (car expr) 'file)))
   (cl-flet ((mu-date (date)
 		     (if (stringp date)
 			 date
@@ -198,11 +196,13 @@ This can also be set per-server."
 (cl-defmethod gnus-search-indexed-search-command ((engine gnus-search-mu)
 						  (qstring string)
 						  query &optional groups)
-  (let ((limit (alist-get 'limit query)))
+  (let ((limit (alist-get 'limit query))
+	(thread (alist-get 'thread query)))
     (with-slots (switches config-directory) engine
       `("find" 			; command must come first
 	,(format "--muhome=%s" config-directory)
 	,@switches
+	,(if thread "-r" "")
 	,(if limit (format "--maxnum=%d" limit) "")
 	,qstring
 	,@(if groups
