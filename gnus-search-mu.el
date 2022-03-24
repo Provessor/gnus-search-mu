@@ -1,6 +1,7 @@
 ;;; gnus-search-mu.el --- mu backend for gnus-search -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021 Jai Flack
+;; Copyright (C) 2020-2021 Jai Flack
+;; Copyright (C) 2022  Free Software Foundation, Inc.
 
 ;; Author: Jai Flack <jflack@disroot.org>
 ;; Version: 0.1
