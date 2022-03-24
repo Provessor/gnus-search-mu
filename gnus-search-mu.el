@@ -4,7 +4,7 @@
 ;; Copyright (C) 2022  Free Software Foundation, Inc.
 
 ;; Author: Jai Flack <jflack@disroot.org>
-;; Version: 0.1
+;; Version: 1.0
 ;; URL: https://git.disroot.org/jflack/gnus-search-mu
 ;; Package-Requires: ((emacs "28.1"))
 ;; Keywords: Gnus gnus-search mu
