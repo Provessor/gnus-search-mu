@@ -11,7 +11,7 @@ To start using it can be as simple as;
   (add-to-list 'load-path "/path/to/gnus-search-mu")
   (require 'gnus-search-mu)
 
-  ;; Then, like any other nnir backend
+  ;; Then, like any other gnus-search backend
   (custom-set-variables
    '(gnus-search-default-engines '((nnmaildir . gnus-search-mu))))
   ;; or
