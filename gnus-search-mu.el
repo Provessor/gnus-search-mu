@@ -151,9 +151,9 @@ This can also be set per-server."
 		   (format "%d-%02d-%02d" y m d)))))
 	    (mu-flag (flag)
 	      ;; Only change what doesn't match
-	      (cond ((string= "flag")
+	      (cond ((string= flag "flag")
 		     "flagged")
-		    ((string= "read")
+		    ((string= flag "read")
 		     "seen")
 		    (t
 		     flag))))
