@@ -153,11 +153,6 @@ This can also be set per-server."
 			    maildir m msgid i prio p flag g date d
 			    size z embed e file j mime y tag x
 			    list v))
-      ;; TODO: check if msgid needs translation
-      ;; (when (eql (car expr) 'id)
-      ;; 	(setf (cdr expr) (replace-regexp-in-string "\\`<\\|>\\'"
-      ;; 						   ""
-      ;; 						   (cdr expr))))
       (format "%s:%s" (car expr)
 	      (if (string-match "\\`\\*" (cdr expr))
 		  (replace-match "" nil nil (cdr expr))
