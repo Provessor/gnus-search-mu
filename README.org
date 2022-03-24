@@ -19,5 +19,4 @@ To start using it can be as simple as;
 #+end_src
 
 For configuration options see the header of [[./gnus-search-mu.el]]. It is designed to fit in with the
-generic gnus-search design where possible, unlike the gnus-search-notmuch engine (which even prefers
-to handle some filtering in elisp instead of the query).
+generic gnus-search design where possible.
