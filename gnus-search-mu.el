@@ -126,10 +126,11 @@ This can also be set per-server."
   (cl-case (car expr)
     (recipient (setf (car expr) 'recip))
     (address (setf (car expr) 'contact))
-    (id (setf (car expr) 'msgid))   	; message-id is translated
-    ;; mark
+    (id (setf (car expr) 'msgid))
+    ;; TODO: implement this
+    (mark (error "mark: not yet implemented"))
     (attachment (setf (car expr) 'file))
-    ;; TODO: implement or remove these
+    ;; TODO: implement this
     (thread (error "thread: not yet implemented")))
   (cl-flet ((mu-date (date)
 		     (if (stringp date)
