@@ -169,15 +169,28 @@ This can also be set per-server."
       (format "date:%s.." (mu-date (cdr expr))))
      (t (ignore-errors (cl-call-next-method))))))
 
+(defun gnus-search-mu--substring (start end)
+  (ansi-color-filter-apply
+   (buffer-substring-no-properties start
+				   end)))
+
+(defun gnus-search-mu--parse-priority (priority)
+  (cond ((string= priority "low")
+	 0)
+	((string= priority "normal")
+	 50)
+	((string= priority "high")
+	 100)))
+
 (cl-defmethod gnus-search-indexed-extract ((_engine gnus-search-mu))
   (prog1
-      (list (ansi-color-filter-apply
-	     (buffer-substring-no-properties (point)
-					     (progn (end-of-line)
-						    (point))))
-	    ;; TODO: parse mu priority levels
-	    100)
-    (forward-char)))
+      (let* ((bol (line-beginning-position))
+	     (eol (line-end-position))
+	     (bound (search-forward " " eol)))
+	(list (gnus-search-mu--substring bound eol)
+	      (gnus-search-mu--parse-priority
+	       (gnus-search-mu--substring bol (1- bound)))))
+    (move-beginning-of-line 2)))
 
 (cl-defmethod gnus-search-indexed-search-command ((engine gnus-search-mu)
 						  (qstring string)
@@ -197,6 +210,6 @@ This can also be set per-server."
 		")")
 	    "")
 	"--format=plain"
-	"--fields=l"))))
+	"--fields=\"p l\""))))
 
 (provide 'gnus-search-mu)
