@@ -127,30 +127,36 @@ This can also be set per-server."
     (recipient (setf (car expr) 'recip))
     (address (setf (car expr) 'contact))
     (id (setf (car expr) 'msgid))
-    ;; TODO: implement this
-    (mark (error "mark: not yet implemented"))
     (attachment (setf (car expr) 'file)))
   (cl-flet ((mu-date (date)
-		     (if (stringp date)
-			 date
-		       (pcase date
-			 (`(nil ,m nil)
-			  (nth (1- m) gnus-english-month-names))
-			 (`(nil nil ,y)
-			  (number-to-string y))
-			 ;; mu prefers ISO date YYYY-MM-DD HH:MM:SS
-			 (`(,d ,m nil)
-			  (let* ((ct (decode-time))
-				 (cm (decoded-time-month ct))
-				 (cy (decoded-time-year ct))
-				 (y (if (> cm m)
-					cy
-				      (1- cy))))
-			    (format "%d-%02d-%02d" y m d)))
-			 (`(nil ,m ,y)
-			  (format "%d-%02d" y m))
-			 (`(,d ,m ,y)
-			  (format "%d-%02d-%02d" y m d))))))
+	      (if (stringp date)
+		  date
+		(pcase date
+		  (`(nil ,m nil)
+		   (nth (1- m) gnus-english-month-names))
+		  (`(nil nil ,y)
+		   (number-to-string y))
+		  ;; mu prefers ISO date YYYY-MM-DD HH:MM:SS
+		  (`(,d ,m nil)
+		   (let* ((ct (decode-time))
+			  (cm (decoded-time-month ct))
+			  (cy (decoded-time-year ct))
+			  (y (if (> cm m)
+				 cy
+			       (1- cy))))
+		     (format "%d-%02d-%02d" y m d)))
+		  (`(nil ,m ,y)
+		   (format "%d-%02d" y m))
+		  (`(,d ,m ,y)
+		   (format "%d-%02d-%02d" y m d)))))
+	    (mu-flag (flag)
+	      ;; Only change what doesn't match
+	      (cond ((string= "flag")
+		     "flagged")
+		    ((string= "read")
+		     "seen")
+		    (t
+		     flag))))
     (cond
      ((consp (car expr))
       (format "(%s)" (gnus-search-transform engine expr)))
@@ -164,6 +170,8 @@ This can also be set per-server."
 	      (if (string-match "\\`\\*" (cdr expr))
 		  (replace-match "" nil nil (cdr expr))
 		(cdr expr))))
+     ((eq (car expr) 'mark)
+      (format "flag:%s" (mu-flag (cdr expr))))
      ((eq (car expr) 'date)
       (format "date:%s" (mu-date (cdr expr))))
      ((eq (car expr) 'before)
