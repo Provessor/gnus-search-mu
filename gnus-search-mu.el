@@ -174,22 +174,20 @@ This can also be set per-server."
    (buffer-substring-no-properties start
 				   end)))
 
-(defun gnus-search-mu--parse-priority (priority)
-  (cond ((string= priority "low")
-	 0)
-	((string= priority "normal")
-	 50)
-	((string= priority "high")
-	 100)))
+;; (defun gnus-search-mu--parse-priority (priority)
+;;   (cond ((string= priority "low")
+;; 	 0)
+;; 	((string= priority "normal")
+;; 	 50)
+;; 	((string= priority "high")
+;; 	 100)))
 
 (cl-defmethod gnus-search-indexed-extract ((_engine gnus-search-mu))
   (prog1
-      (let* ((bol (line-beginning-position))
-	     (eol (line-end-position))
-	     (bound (search-forward " " eol)))
-	(list (gnus-search-mu--substring bound eol)
-	      (gnus-search-mu--parse-priority
-	       (gnus-search-mu--substring bol (1- bound)))))
+      (let ((bol (line-beginning-position))
+	    (eol (line-end-position)))
+	(list (gnus-search-mu--substring bol eol)
+	      100))
     (move-beginning-of-line 2)))
 
 (cl-defmethod gnus-search-indexed-search-command ((engine gnus-search-mu)
@@ -210,6 +208,6 @@ This can also be set per-server."
 		")")
 	    "")
 	"--format=plain"
-	"--fields=\"p l\""))))
+	"--fields=l"))))
 
 (provide 'gnus-search-mu)
