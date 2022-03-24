@@ -140,12 +140,19 @@ This can also be set per-server."
 			  (nth (1- m) gnus-english-month-names))
 			 (`(nil nil ,y)
 			  (number-to-string y))
+			 ;; mu prefers ISO date YYYY-MM-DD HH:MM:SS
 			 (`(,d ,m nil)
-			  (format "%02d-%02d" d m))
+			  (let* ((ct (decode-time))
+				 (cm (decoded-time-month ct))
+				 (cy (decoded-time-year ct))
+				 (y (if (> cm m)
+					cy
+				      (1- cy))))
+			    (format "%d-%02d-%02d" y m d)))
 			 (`(nil ,m ,y)
-			  (format "%02d-%02d" m y))
+			  (format "%d-%02d" y m))
 			 (`(,d ,m ,y)
-			  (format "%d/%d/%d" m d y))))))
+			  (format "%d-%02d-%02d" y m d))))))
     (cond
      ((consp (car expr))
       (format "(%s)" (gnus-search-transform engine expr)))
