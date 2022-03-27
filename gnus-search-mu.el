@@ -68,9 +68,9 @@ This can also be set per-server."
   :type '(repeat (string))
   :group 'gnus-search)
 
-(defcustom gnus-search-mu-remove-prefix (expand-file-name "Mail/" (getenv "HOME"))
+(defcustom gnus-search-mu-remove-prefix (expand-file-name "Mail/" "~")
   "The prefix to remove from each file name returned by mu in
-order to get a group name. Generally this should be set to your
+order to get a group name. Generally this should be set the
 path to your mail directory. This is a regular expression.
 
 This is very similar to `gnus-search-notmuch-remove-prefix' and
