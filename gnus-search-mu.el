@@ -53,29 +53,28 @@
 
 (defcustom gnus-search-mu-program "mu"
   "Name of mu search executable.
-
 This can also be set per-server."
   :type '(string)
   :group 'gnus-search)
 
 (defcustom gnus-search-mu-switches '()
   "A list of strings, to be given as additional arguments to mu.
-
-Changing the format or fields will have no effect because it is
-forced to \"--format=plain\" and \"--fields=l\" respectively.
+Note that this should be a list. I.e., do NOT use the following:
+    (setq gnus-search-mu-switches \"-u -r\")
+Instead, use this:
+    (setq gnus-search-mu-switches \\='(\"-u\" \"-r\"))
 
 This can also be set per-server."
   :type '(repeat (string))
   :group 'gnus-search)
 
 (defcustom gnus-search-mu-remove-prefix (expand-file-name "Mail/" "~")
-  "The prefix to remove from each file name returned by mu in
-order to get a group name. Generally this should be set the
-path to your mail directory. This is a regular expression.
+  "A prefix to remove from each file name returned by mu in order
+to get a group name. Usually this will be set to the path to your
+mail directory.
 
-This is very similar to `gnus-search-notmuch-remove-prefix' and
-`gnus-search-namazu-remove-prefix'."
-  :type '(regexp)
+This can also be set per-server."
+  :type '(string)
   :group 'gnus-search)
 
 (defcustom gnus-search-mu-config-directory
@@ -89,9 +88,6 @@ This can also be set per-server."
 (defcustom gnus-search-mu-raw-queries-p nil
   "If t, all mu engines will only accept raw search query
 strings.
-
-This is very similar to `gnus-search-notmuch-raw-queries-p'
-and `gnus-search-namazu-raw-queries-p'.
 
 This can also be set per-server."
   :type 'boolean
