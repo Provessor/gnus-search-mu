@@ -49,7 +49,6 @@
 
 (require 'gnus-search)
 (require 'gnus-art)
-(require 'ansi-color)
 
 
 (defcustom gnus-search-mu-program "mu"
@@ -180,24 +179,12 @@ This can also be set per-server."
       (format "date:%s.." (mu-date (cdr expr))))
      (t (ignore-errors (cl-call-next-method))))))
 
-(defun gnus-search-mu--substring (start end)
-  (ansi-color-filter-apply
-   (buffer-substring-no-properties start
-				   end)))
-
-;; (defun gnus-search-mu--parse-priority (priority)
-;;   (cond ((string= priority "low")
-;; 	 0)
-;; 	((string= priority "normal")
-;; 	 50)
-;; 	((string= priority "high")
-;; 	 100)))
 
 (cl-defmethod gnus-search-indexed-extract ((_engine gnus-search-mu))
   (prog1
       (let ((bol (line-beginning-position))
 	    (eol (line-end-position)))
-	(list (gnus-search-mu--substring bol eol)
+	(list (buffer-substring-no-properties bol eol)
 	      100))
     (move-beginning-of-line 2)))
 
@@ -208,6 +195,7 @@ This can also be set per-server."
 	(thread (alist-get 'thread query)))
     (with-slots (switches config-directory) engine
       `("find" 			; command must come first
+	"--nocolor"		; mu will always give coloured output otherwise
 	,(format "--muhome=%s" config-directory)
 	,@switches
 	,(if thread "-r" "")
