@@ -71,7 +71,7 @@ This can also be set per-server."
   "A prefix to remove from the mu results to get a group name.
 Usually this will be set to the path to your mail directory. This
 can also be set per-server."
-  :type '(string)
+  :type '(directory)
   :group 'gnus-search)
 
 (defcustom gnus-search-mu-config-directory
