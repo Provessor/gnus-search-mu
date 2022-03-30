@@ -100,10 +100,6 @@ This can also be set per-server."
     :initform (symbol-value 'gnus-search-mu-raw-queries-p))))
 
 
-;; (cl-defmethod gnus-search-transform ((_engine gnus-search-mu)
-;; 				     (_query null))
-;;   "*")
-
 (cl-defmethod gnus-search-transform-expression ((engine gnus-search-mu)
 						(expr list))
   (cl-case (car expr)
