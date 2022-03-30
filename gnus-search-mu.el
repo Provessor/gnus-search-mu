@@ -107,35 +107,7 @@ This can also be set per-server."
     (address (setf (car expr) 'contact))
     (id (setf (car expr) 'msgid))
     (attachment (setf (car expr) 'file)))
-  (cl-flet ((mu-date (date)
-	      (if (stringp date)
-		  date
-		(pcase date
-		  (`(nil ,m nil)
-		   (nth (1- m) gnus-english-month-names))
-		  (`(nil nil ,y)
-		   (number-to-string y))
-		  ;; mu prefers ISO date YYYY-MM-DD HH:MM:SS
-		  (`(,d ,m nil)
-		   (let* ((ct (decode-time))
-			  (cm (decoded-time-month ct))
-			  (cy (decoded-time-year ct))
-			  (y (if (> cm m)
-				 cy
-			       (1- cy))))
-		     (format "%d-%02d-%02d" y m d)))
-		  (`(nil ,m ,y)
-		   (format "%d-%02d" y m))
-		  (`(,d ,m ,y)
-		   (format "%d-%02d-%02d" y m d)))))
-	    (mu-flag (flag)
-	      ;; Only change what doesn't match
-	      (cond ((string= flag "flag")
-		     "flagged")
-		    ((string= flag "read")
-		     "seen")
-		    (t
-		     flag))))
+  (cl-flet ()
     (cond
      ((consp (car expr))
       (format "(%s)" (gnus-search-transform engine expr)))
@@ -150,14 +122,45 @@ This can also be set per-server."
 		  (replace-match "" nil nil (cdr expr))
 		(cdr expr))))
      ((eq (car expr) 'mark)
-      (format "flag:%s" (mu-flag (cdr expr))))
+      (format "flag:%s" (gnus-search-mu-handle-flag (cdr expr))))
      ((eq (car expr) 'date)
-      (format "date:%s" (mu-date (cdr expr))))
+      (format "date:%s" (gnus-search-mu-handle-date (cdr expr))))
      ((eq (car expr) 'before)
-      (format "date:..%s" (mu-date (cdr expr))))
+      (format "date:..%s" (gnus-search-mu-handle-date (cdr expr))))
      ((eq (car expr) 'since)
-      (format "date:%s.." (mu-date (cdr expr))))
+      (format "date:%s.." (gnus-search-mu-handle-date (cdr expr))))
      (t (ignore-errors (cl-call-next-method))))))
+
+(defun gnus-search-mu-handle-date (date)
+  (if (stringp date)
+      date
+    (pcase date
+      (`(nil ,m nil)
+       (nth (1- m) gnus-english-month-names))
+      (`(nil nil ,y)
+       (number-to-string y))
+      ;; mu prefers ISO date YYYY-MM-DD HH:MM:SS
+      (`(,d ,m nil)
+       (let* ((ct (decode-time))
+	      (cm (decoded-time-month ct))
+	      (cy (decoded-time-year ct))
+	      (y (if (> cm m)
+		     cy
+		   (1- cy))))
+	 (format "%d-%02d-%02d" y m d)))
+      (`(nil ,m ,y)
+       (format "%d-%02d" y m))
+      (`(,d ,m ,y)
+       (format "%d-%02d-%02d" y m d)))))
+
+(defun gnus-search-mu-handle-flag (flag)
+  ;; Only change what doesn't match
+  (cond ((string= flag "flag")
+	 "flagged")
+	((string= flag "read")
+	 "seen")
+	(t
+	 flag)))
 
 
 (cl-defmethod gnus-search-indexed-extract ((_engine gnus-search-mu))
