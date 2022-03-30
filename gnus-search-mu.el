@@ -105,12 +105,6 @@ This can also be set per-server."
 ;;   "*")
 
 (cl-defmethod gnus-search-transform-expression ((engine gnus-search-mu)
-						(expr (head near)))
-  (format "%s near %s"
-	  (gnus-search-transform-expression engine (nth 1 expr))
-	  (gnus-search-transform-expression engine (nth 2 expr))))
-
-(cl-defmethod gnus-search-transform-expression ((engine gnus-search-mu)
 						(expr list))
   (cl-case (car expr)
     (recipient (setf (car expr) 'recip))
